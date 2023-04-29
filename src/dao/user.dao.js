@@ -91,13 +91,14 @@ const userProfileUpdate = (req) => {
       //validate user input
       await requiredKeys(req, keys);
 
+      if (name !== undefined) {
+        name = name.trim();
+      }
+
       //validate operator datatype
       if (typeof operator !== "boolean" && operator !== undefined) {
         reject(new Error("operator must be true || false"));
       }
-
-      //remove trailing and leading spaces from name
-      name = name.trim();
 
       //check for user id and obtain user id
       const user_id = await getUserId(req);
