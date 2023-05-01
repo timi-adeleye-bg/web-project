@@ -46,6 +46,8 @@ const validateUserData = (req) => {
     try {
       const { name, email, password, operator } = req.body;
 
+      const emailPattern = /^\S+@\S+\.\S+$/;
+
       //valid input keys to be passed in by the client
       const keys = ["name", "email", "password", "operator"];
       await requiredKeys(req, keys);
@@ -55,16 +57,11 @@ const validateUserData = (req) => {
         reject(new Error("Name, email and password fields are required"));
       } else if (typeof operator !== "boolean" && operator !== undefined) {
         reject(new Error("operator must be true || false"));
+      } else if (!emailPattern.test(email.trim())) {
+        reject(new Error("Please enter a valid email address"));
       } else {
         resolve(true);
       }
-
-      //   //check if user pass the right datatype for the operator field if defined
-      //   if (typeof operator !== "boolean" && operator !== undefined) {
-      //     reject("operator must be true || false");
-      //   }
-
-      //   resolve(true);
     } catch (error) {
       reject(error);
     }

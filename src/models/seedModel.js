@@ -16,9 +16,9 @@ const seedSchema = mongoose.Schema(
       },
     },
     product_id: {
-      type: mongoose.Schema.Types.String,
+      type: String,
       required: [true, "Please input product ID"],
-      ref: "Product",
+      ref: "Product.product_id",
     },
   },
   {

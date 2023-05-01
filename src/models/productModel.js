@@ -12,9 +12,10 @@ const productSchema = mongoose.Schema(
       type: String,
       unique: true,
       default: function () {
-        const prefix = this.name.substr(0, 2);
+        const prefix = this.product.substr(0, 2);
+        const sep = "-";
         const num = Math.floor(Math.random() * 100) + 1;
-        return prefix + num;
+        return prefix + sep + num;
       },
     },
   },

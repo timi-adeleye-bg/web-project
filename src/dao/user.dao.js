@@ -31,8 +31,8 @@ const userSignUp = (req) => {
 
       //create user profile in Database
       const user = await User.create({
-        name,
-        email,
+        name: name.trim(),
+        email: email.toLowerCase().trim(),
         password: hashedPassword,
         operator,
       });

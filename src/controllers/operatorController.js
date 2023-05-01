@@ -2,6 +2,7 @@ const {
   operatorSignUp,
   operatorUpdate,
   updatePicture,
+  selectProduct,
 } = require("../dao/operator.dao");
 
 //@desc Create New Operator
@@ -44,4 +45,23 @@ const pictureUpdate = async (req, res) => {
     res.status(400).json(error.message);
   }
 };
-module.exports = { createOperator, updateOperator, pictureUpdate };
+
+//@desc Select Product and Seed type
+//@route PUT /api/operator/:product_id/:seedId
+//@access private
+
+const productSelect = async (req, res) => {
+  try {
+    let result = await selectProduct(req);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(404).json(error.message);
+  }
+};
+
+module.exports = {
+  createOperator,
+  updateOperator,
+  pictureUpdate,
+  productSelect,
+};

@@ -5,6 +5,7 @@ const {
   createOperator,
   updateOperator,
   pictureUpdate,
+  productSelect,
 } = require("../controllers/operatorController");
 const { authToken } = require("../middlewares/authUser");
 const multer = require("multer");
@@ -46,5 +47,8 @@ operatorRoute.put(
   upload.single("userPicture"),
   pictureUpdate
 );
+
+//route to select product and seed type
+operatorRoute.post("/:product_id/:seedId", authToken, productSelect);
 
 module.exports = operatorRoute;

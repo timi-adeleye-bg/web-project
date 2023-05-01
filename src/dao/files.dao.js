@@ -15,7 +15,7 @@ const { error } = require("console");
 const countryStream = fs.createReadStream("./src/files/country.csv");
 const stateStream = fs.createReadStream("./src/files/state.csv");
 const lGAStream = fs.createReadStream("./src/files/lGA.csv");
-const productStream = fs.createReadStream("./src/files/product.csv");
+const productStream = fs.createReadStream("./src/files/products.csv");
 const seedStream = fs.createReadStream("./src/files/seed.csv");
 
 //import country file
@@ -142,63 +142,124 @@ const uploadlGA = (req) => {
 };
 
 //import product table
+// const uploadProduct = (req) => {
+//   productStream
+//     .pipe(csv())
+//     .on("data", async (row) => {
+//       try {
+//         //check if product exist
+//         const existingProduct = await Product.findOne({ product: row.name });
+//         if (existingProduct) {
+//           throw new Error("Product already exist");
+//         } else {
+//           const product = new Product({
+//             product: row.name,
+//           });
+//           //save product into database
+//           await product.save();
+//         }
+//       } catch (error) {
+//         throw error;
+//       }
+//     })
+//     .on("end", () => {
+//       return "CSV file processed successfully";
+//     });
+// };
+
 const uploadProduct = (req) => {
-  productStream
-    .pipe(csv())
-    .on("data", async (row) => {
-      try {
-        //check if product exist
-        const existingProduct = await Product.findOne({ product: row.name });
-        if (existingProduct) {
-          throw new Error("Product already exist");
-        } else {
-          const product = new Product({
-            product: row.name,
-          });
-          //save product into database
-          await product.save();
+  return new Promise((resolve, reject) => {
+    productStream
+      .pipe(csv())
+      .on("data", async (row) => {
+        try {
+          //check if product exist
+          const existingProduct = await Product.findOne({ product: row.name });
+          if (existingProduct) {
+            throw new Error("Product already exist");
+          } else {
+            const product = new Product({
+              product: row.name,
+            });
+            //save product into database
+            await product.save();
+          }
+        } catch (error) {
+          reject(error);
         }
-      } catch (error) {
-        throw error;
-      }
-    })
-    .on("end", () => {
-      return "CSV file processed successfully";
-    });
+      })
+      .on("end", () => {
+        resolve("CSV file processed successfully");
+      });
+  });
 };
 
 const uploadSeed = (req) => {
-  seedStream
-    .pipe(csv())
-    .on("data", async (row) => {
-      try {
-        //check if product imported exist
-        const product = await Product.findOne({ product_id: row.product_id });
-        if (!product) {
-          throw new Error("Product doesn't exist");
-        }
+  return new Promise((resolve, reject) => {
+    seedStream
+      .pipe(csv())
+      .on("data", async (row) => {
+        try {
+          //check if product imported exist
+          const product = await Product.findOne({ product_id: row.product_id });
+          if (!product) {
+            reject(new Error("Product doesn't exist"));
+          }
 
-        //check if seed already exist
-        const existingSeed = await Seed.findOne({ name: row.name });
-        if (existingSeed) {
-          throw new Error("Seed type already exist");
-        } else {
-          const seed = new Seed({
-            name: row.name,
-            product_id: row.product_id,
-          });
+          //check if seed already exist
+          const existingSeed = await Seed.findOne({ name: row.name });
+          if (existingSeed) {
+            reject(new Error("Seed type already exist"));
+          } else {
+            const seed = new Seed({
+              name: row.name,
+              product_id: row.product_id,
+            });
 
-          //store data in database
-          await seed.save();
+            //store data in database
+            await seed.save();
+          }
+        } catch (error) {
+          reject(error);
         }
-      } catch (error) {
-        throw error;
-      }
-    })
-    .on("end", () => {
-      return "CSV file processed successfully";
-    });
+      })
+      .on("end", () => {
+        resolve("CSV file processed successfully");
+      });
+  });
 };
+// const uploadSeed = (req) => {
+//   seedStream
+//     .pipe(csv())
+//     .on("data", async (row) => {
+//       try {
+//         //check if product imported exist
+//         const product = await Product.findOne({ product_id: row.product_id });
+//         if (!product) {
+//           throw new Error("Product doesn't exist");
+//         }
+
+//         //check if seed already exist
+//         const existingSeed = await Seed.findOne({ name: row.name });
+//         if (existingSeed) {
+//           throw new Error("Seed type already exist");
+//         } else {
+//           const seed = new Seed({
+//             name: row.name,
+//             product_id: row.product_id,
+//           });
+
+//           //store data in database
+//           await seed.save();
+//         }
+//       } catch (error) {
+//         throw error;
+//       }
+//     })
+//     .on("end", () => {
+//       return "CSV file processed successfully";
+//     });
+// };
 
 module.exports = {
   uploadCountry,

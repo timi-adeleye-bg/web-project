@@ -14,7 +14,7 @@ const createUser = async (req, res) => {
     let result = await userSignUp(req);
     res.status(200).json(result);
   } catch (error) {
-    // console.log("Error creating user: ", error);
+    console.log("Error creating user: ", error);
     res.status(404).json(error.message);
   }
 };

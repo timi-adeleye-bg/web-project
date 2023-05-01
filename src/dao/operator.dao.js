@@ -1,13 +1,19 @@
 //import required modules
 const Operator = require("../models/operatorModel");
 const State = require("../models/stateModel");
+const lGA = require("../models/lgaModel");
 const User = require("../models/userModel");
+const Selection = require("../models/selectionModel");
 const { getUserId, requiredKeys } = require("../services/userservices");
 const {
   validateNationality,
   validateState,
   validatelGA,
   validateOperatorData,
+  getOperatorStatus,
+  validateProduct,
+  validateSeed,
+  validatelGAUpdate,
 } = require("../services/operatorsevices");
 
 //Register a new Operator
@@ -114,20 +120,26 @@ const operatorUpdate = async (req) => {
       }
     }
 
+    //validate state and lga values
     if (state !== undefined && lga !== undefined) {
       state = state.toLowerCase().trim();
       lga = lga.toLowerCase().trim();
 
-      //validate state
+      // Validate state and local government area
       await validateState(req);
-
-      //validate Local Government Area
       await validatelGA(req);
-    } else {
-      if (state !== undefined || lga !== undefined) {
-        throw new Error(
-          "Changing your state will require you change lga and vice versa"
-        );
+    } else if (state !== undefined) {
+      throw new Error(
+        "Changing your state will require you to change your LGA"
+      );
+    } else if (lga !== undefined) {
+      const name = await validatelGAUpdate(req);
+      const userId = await getUserId(req);
+      const existingUser = await Operator.findOne({ userId });
+      const stateName = existingUser.state;
+
+      if (name !== stateName) {
+        throw new Error("The new LGA does not belong to your current state");
       }
     }
 
@@ -188,4 +200,49 @@ const updatePicture = async (req) => {
   }
 };
 
-module.exports = { operatorSignUp, operatorUpdate, updatePicture };
+//Function to enable operator select product and seed type
+const selectProduct = async (req) => {
+  try {
+    //define the input parameters
+    const { product_id, seedId } = req.params;
+
+    //obtain operator ID if operator is verified
+    const operatorId = await getOperatorStatus(req);
+
+    //check database to see if operator selection already exist
+    const foundSelection = await Selection.findOne({ operatorId });
+    if (
+      foundSelection.product_id === product_id &&
+      foundSelection.seedId === seedId
+    ) {
+      throw new Error(
+        "You already have this Product and Seed Type in your collection"
+      );
+    }
+
+    //validate Product
+    await validateProduct(req);
+
+    //validate seed type
+    await validateSeed(req);
+
+    //create operator selection table
+    const operatorSelection = await Selection.create({
+      operatorId,
+      product_id,
+      seedId,
+    });
+
+    console.log("Product Selection Successful");
+    return operatorSelection;
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = {
+  operatorSignUp,
+  operatorUpdate,
+  updatePicture,
+  selectProduct,
+};
