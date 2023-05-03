@@ -17,13 +17,13 @@ const getOperatorStatus = (req) => {
       //check if user is an operator
       const isOperator = await Operator.findOne({ userId });
       if (!isOperator) {
-        reject("User is not an operator");
+        reject(new Error("User is not an operator"));
       }
 
       //search database to know operator verified status
       const Verified = await Operator.findOne({ userId });
       if (!Verified.isVerified) {
-        reject("You need to be verified to complete operation");
+        reject(new Error("You need to be verified to complete operation"));
       } else {
         const operatorId = Verified.operatorId;
         resolve(operatorId); //resolve operatorId on the opeartor's table

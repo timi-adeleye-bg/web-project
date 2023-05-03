@@ -55,6 +55,7 @@ const productSelect = async (req, res) => {
     let result = await selectProduct(req);
     res.status(200).json(result);
   } catch (error) {
+    console.log(error);
     res.status(404).json(error.message);
   }
 };

@@ -71,10 +71,10 @@ const operatorSignUp = async (req) => {
     const operator = await Operator.create({
       fullName,
       phoneNumber,
-      nationality,
-      state,
-      lga,
-      sex: sex.toLowerCase(),
+      nationality: nationality.toLowerCase().trim(),
+      state: state.toLowerCase().trim(),
+      lga: lga.toLowerCase().trim(),
+      sex: sex.toLowerCase().trim(),
       dateOfBirth,
       nin,
       userId: user_id,
@@ -211,13 +211,16 @@ const selectProduct = async (req) => {
 
     //check database to see if operator selection already exist
     const foundSelection = await Selection.findOne({ operatorId });
-    if (
-      foundSelection.product_id === product_id &&
-      foundSelection.seedId === seedId
-    ) {
-      throw new Error(
-        "You already have this Product and Seed Type in your collection"
-      );
+
+    if (foundSelection) {
+      if (
+        foundSelection.product_id === product_id &&
+        foundSelection.seedId === seedId
+      ) {
+        throw new Error(
+          "You already have this Product and Seed Type in your collection"
+        );
+      }
     }
 
     //validate Product

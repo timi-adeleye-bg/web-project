@@ -56,7 +56,7 @@ const validateUserData = (req) => {
       if (!name || !email || !password) {
         reject(new Error("Name, email and password fields are required"));
       } else if (typeof operator !== "boolean" && operator !== undefined) {
-        reject(new Error("operator must be true || false"));
+        reject(new Error("operator must be boolean true || false"));
       } else if (!emailPattern.test(email.trim())) {
         reject(new Error("Please enter a valid email address"));
       } else {
