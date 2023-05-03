@@ -1,6 +1,6 @@
 # BG Web Project
 
-A project developed to address a sector business model
+A project developed to address a sector of business model in BG
 
 ### Project Metadata
 
@@ -8,109 +8,51 @@ Stack = Node.js
 Database = MongoDB Atlas
 Endpoint Test Environment = Postman
 Framework = Express.js
+Port = 5000
 
-const bodyParser = require("body-parser"); index.js
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: true }));
+### How to run the app
 
-const checkFileUpload = (req, res, next) => { operator controller
-if (!req.file) {
-return res.status(400).send({ error: "No image uploaded" });
-}
-next();
-};
+-Clone the repo
+-Open cloned folder and run `npm install`
 
-operator.dao
-// const operatorSignUp = (req) => {
-// return new Promise(async (resolve, reject) => {
-// try {
-// const {
-// fullName,
-// phoneNumber,
-// nationality,
-// state,
-// lga,
-// sex,
-// dateOfBirth,
-// nin,
-// } = req.body;
+- Create a new database in MongoDB called `Operator-db`
+  -All other details for the db can be found in the .env file
+  -Run `npm run dev` to start the server.
+  -Use a postman tool to interact with the endpoints. Visit any of the endpoints below with the correct request method
 
-// //validate operator status
-// const user_id = await getUserId(req);
-// const userStatus = await User.findById(user_id);
-// console.log(userStatus.operator);
+## Endpoints Available
 
-// if (!userStatus.operator) {
-// reject(
-// new Error("You need to be an operator to complete registration")
-// );
-// } else {
-// //validate operator data fields
-// await validateOperatorData(req);
+### Authentication
 
-// //check if user already exist
-// const userId = user_id;
-// console.log(userId);
-// const foundUser = await Operator.findOne({ userId });
-// if (foundUser) {
-// reject(new Error("User already exist"));
-// }
+User Signup - route POST /api/users/register
+User login - route POST /api/users/login
+User Profile Update - route PUT /api/users/login
 
-// //validate nationality
-// await validateNationality(req);
+### Operators
 
-// // validate state
-// await validateState(req);
+Operator registration - route POST /api/operator/register
+Operator Profile Update - route PUT /api/operator/updateoperator
+Operator Picture Update - route PUT /api/operator/updatepicture
+Select Product & seed type - route PUT /api/operator/:product_id/:seedId
 
-// //validate Local Gaovernment Area
-// await validatelGA(req);
+### States and LGAs
 
-// // Check if user uploaded a file
-// const userPicture = req.file ? req.file.path : "";
+Import Countries - route POST /api/files/uploadcountry
+import States - route POST /api/files/uploadstate
+Import LGA - route POST /api/files/uploadlga
+Import Products - route POST /api/files/product
+Import Seeds - route POST /api/files/seed
 
-// //create operator data in Database
-// const operator = await Operator.create({
-// fullName,
-// phoneNumber,
-// nationality,
-// state,
-// lga,
-// sex: sex.toLowerCase(),
-// dateOfBirth,
-// nin,
-// userId: user_id,
-// userPicture,
-// });
+## Parameters for Each Endpoint
 
-// console.log("Operator created successfully");
+### Users
 
-// resolve(operator);
-// }
-// } catch (error) {
-// console.log(error);
-// reject(error);
-// }
-// });
-// };
+User Signup - {Name, email, password, operator(true || false)}
+User login - {email, password}
 
-operatorservices
-// const validateNationality = (req) => {
-// return new Promise(async (resolve, reject) => {
-// try {
-// let { nationality } = req.body;
-// nationality = nationality.toLowerCase().trim();
+### Operators
 
-// //check database to see if the country exist
-// const foundCountry = await Country.findOne({ nationality });
-// if (!foundCountry) {
-// reject("Services not available in your nation yet");
-// } else {
-// const countryID = foundCountry.\_id;
-// resolve(countryID);
-// }
-// } catch (error) {
-// console.log(error);
-// reject(error);
-// }
-// });
-// };
+Operator registration - { fullName, phoneNumber, nationality, state, lga, sex, dateOfBirth, nin, userPicture(file) }
+Operator Profile Update - { fullName, phoneNumber, nationality, state, lga, sex, dateOfBirth, nin }
+Operator Picture Update - { userPicture(file) }
+Product & Seed Type - { product_id, seedId } (req.params.id)
